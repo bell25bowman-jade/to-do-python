@@ -34,6 +34,8 @@ def main():
                 except ValueError:
                     print("Invalid input. Please enter a valid task number.")
                     continue
+                finally:
+                    print("Returning to the main menu.")
 
                 if 1 <= task_num <= len(tasks):
                     deleted_task = tasks.pop(task_num - 1)
