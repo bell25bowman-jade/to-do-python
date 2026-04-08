@@ -1,52 +1,98 @@
+"""Simple command-line to-do list application."""
+
+
+def display_welcome_message():
+    """Display a short welcome message when the app starts."""
+    print("Welcome to the To-Do List CLI.")
+
+
+def display_menu():
+    """Show the main menu options."""
+    print("\nMenu:")
+    print("1. View tasks")
+    print("2. Add task")
+    print("3. Delete task")
+    print("4. Quit application")
+
+
 def get_user_choice():
-    print("1.View Tasks: ")
-    print("2. Add Task: ")
-    print("3. Delete Task: ")
-    print("4. Quit Application: ")
-    choice = input("Please enter your choice (1-4): ")
-    return choice
+    """Prompt the user for a menu choice."""
+    return input("Please enter your choice (1-4): ").strip()
 
-#menu
-def main():
-    tasks = []
-    while True:
-        choice = get_user_choice()
-        if choice == "1": # View Tasks
-            if not tasks:
-                print("No Tasks Available")
-            else:
-                print("Tasks Available:")
 
-                for i, task in enumerate(tasks, 1):
-                    print(f"{i}. {task}")
-        elif choice == "2": # Add Task
-            task = input("Enter the task you want to add: ")
-            tasks.append(task)
-        elif choice == "3": # Delete Task
-            if not tasks:
-                print("No Tasks Available to Delete")
-            else:
-                print("Tasks Available:")
-                for i, task in enumerate(tasks, 1):
-                    print(f"{i}. {task}")
-                try:
-                    task_num = int(input("Enter the task number you want to delete: "))
-                except ValueError:
-                    print("Invalid input. Please enter a valid task number.")
-                    continue
-                finally:
-                    print("Returning to the main menu.")
+def view_tasks(tasks):
+    """Display all tasks currently stored in the list."""
+    if not tasks:
+        print("There are no tasks to view.")
+        return
 
-                if 1 <= task_num <= len(tasks):
-                    deleted_task = tasks.pop(task_num - 1)
-                    print(f"Deleted task: {deleted_task}")
-                else:
-                    print("Invalid Task Number")
-        elif choice == "4": # Quit Application
-            print("Quitting Application.")
-            break
+    print("Current tasks:")
+    for index, task in enumerate(tasks, start=1):
+        print(f"{index}. {task}")
+
+
+def add_task(tasks):
+    """Add a new task to the task list."""
+    task = input("Enter the task you want to add: ").strip()
+
+    if not task:
+        print("Task cannot be empty.")
+        return
+
+    tasks.append(task)
+    print(f'Task added: "{task}"')
+
+
+def delete_task(tasks):
+    """Delete a task selected by its task number."""
+    if not tasks:
+        print("There are no tasks to delete.")
+        return
+
+    view_tasks(tasks)
+
+    try:
+        task_number = int(input("Enter the task number you want to delete: ").strip())
+    except ValueError:
+        print("Invalid input. Please enter a number.")
+    else:
+        if 1 <= task_number <= len(tasks):
+            deleted_task = tasks.pop(task_number - 1)
+            print(f'Task deleted: "{deleted_task}"')
         else:
-            print("Invalid Choice. Select options 1 through 4.")
+            print("That task does not exist.")
+    finally:
+        print("Returning to the main menu.")
+
+
+def handle_menu_choice(choice, tasks):
+    """Run the action selected from the main menu."""
+    if choice == "1":
+        view_tasks(tasks)
+    elif choice == "2":
+        add_task(tasks)
+    elif choice == "3":
+        delete_task(tasks)
+    elif choice == "4":
+        print("Quitting application.")
+        return False
+    else:
+        print("Invalid choice. Select an option from 1 to 4.")
+
+    return True
+
+
+def main():
+    """Run the to-do list command-line interface."""
+    tasks = []
+    display_welcome_message()
+
+    while True:
+        display_menu()
+        choice = get_user_choice()
+
+        if not handle_menu_choice(choice, tasks):
+            break
 
 
 if __name__ == "__main__":
